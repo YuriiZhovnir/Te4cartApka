@@ -3,4 +3,9 @@
     <string name="faind">Найти</string>
     <string name="search">Поиск</string>
     <string name="grn">грн</string>
+    <string name="btn_bay">Купить</string>
+    <string name="text_categori">Категория:</string>
+    <string name="product_exist">НА СКЛАДЕ</string>
+    <string name="description">Описание</string>
+    <string name="characteristics">Xарактеристики</string>
 </resources>

@@ -16,5 +16,5 @@ interface Api{
     fun getProduct(@Field("categorySlug") categorySlug: String): Observable<ArrayList<Product>>
 
     @GET("getProductDetails")
-    fun getDetailsProduct(@Query("productId") productId: String): Observable <DeteilsProduct>
+    fun getDetailsProduct(@Query("productId") productId: Int): Observable <DeteilsProduct>
 }
