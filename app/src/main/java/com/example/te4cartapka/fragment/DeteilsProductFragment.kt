@@ -17,6 +17,10 @@ import kotlinx.android.synthetic.main.fragment__product_deteils.*
 import kotlinx.android.synthetic.main.fragment__product_deteils.nameProduct
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import com.google.android.material.tabs.TabLayout
+
+
+
 
 class DeteilsProductFragment : Fragment() {
     companion object {
@@ -52,10 +56,18 @@ class DeteilsProductFragment : Fragment() {
                     override fun onNext(response: DeteilsProduct) {
                         nameProduct.text = response.productName
 
-                        val adapter = SliderAdapter(requireContext(), response.images)
+                        val adapter = context?.let { SliderAdapter(it, response.images) }
                         viewPager.setAdapter(adapter)
 
+
+                        val tabLayout = view?.findViewById(R.id.tab_layout) as TabLayout
+                        tabLayout.setupWithViewPager(viewPager, true)
+
+
+
                         priceProduct.text = response.productPrice.toString()
+
+
                         if (response.available == true) {
                             productExistence.text = getText(R.string.product_exist)
                         }
@@ -80,10 +92,11 @@ class DeteilsProductFragment : Fragment() {
 
                         }
                         parametersProduct.setOnClickListener {
-                            description.text = "ТАБЛИЦЯ З ІНФОРМАЦІЄЮ ПРО ПРОДУКТ"
+//                            characteristics = response.productCategoryProperty
                             parametersProduct.setTextColor(Color.RED)
-                            description.setTextColor(Color.BLACK)
+                            openDescription.setTextColor(Color.BLACK)
                         }
+
                     }
                 })
     }

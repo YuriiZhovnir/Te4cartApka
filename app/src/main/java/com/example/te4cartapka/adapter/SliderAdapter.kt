@@ -23,7 +23,7 @@ class SliderAdapter internal constructor(private val context: Context, private v
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val imageView = ImageView(context)
         Picasso.get()
-                .load(imageUrls?.get(position))
+                .load("https://te4cart.com.ua/files/" + imageUrls?.get(position))
                 .fit()
                 .centerCrop()
                 .into(imageView)
