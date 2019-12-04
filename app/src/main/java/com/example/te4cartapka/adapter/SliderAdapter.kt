@@ -7,10 +7,12 @@ import android.widget.ImageView
 import androidx.viewpager.widget.PagerAdapter
 import com.squareup.picasso.Picasso
 
-class SliderAdapter internal constructor(private val context: Context, private val imageUrls: Array<String>) : PagerAdapter() {
+class SliderAdapter internal constructor(private val context: Context, private val imageUrls: ArrayList<String>? = ArrayList()) : PagerAdapter() {
 
     override fun getCount(): Int {
-            return imageUrls.size
+
+            return imageUrls!!.size
+
 
     }
 
