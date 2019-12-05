@@ -8,8 +8,9 @@ import com.example.te4cartapka.R
 import com.example.te4cartapka.network.respons.Categories
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.categories_item_style.view.*
+import kotlinx.android.synthetic.main.product_recycler.view.*
 
-class CategoriesAdapter(val categories: ArrayList<Categories> = ArrayList()) :
+class CategoriesAdapter(var categories: ArrayList<Categories> = ArrayList(), val listener : OnItemClick?) :
     RecyclerView.Adapter<CategoriesAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -24,6 +25,9 @@ class CategoriesAdapter(val categories: ArrayList<Categories> = ArrayList()) :
         Picasso.get()
             .load("https://te4cart.com.ua/files/" + item.image)
             .into(holder.imageC)
+        holder.categoriesItem.setOnClickListener {
+            listener?.onItemClickCategory(item)
+        }
     }
 
     override fun getItemCount() = categories.size
@@ -31,5 +35,12 @@ class CategoriesAdapter(val categories: ArrayList<Categories> = ArrayList()) :
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name = itemView.nameCategoriesList
         val imageC = itemView.imageCategoriesList
+        val categoriesItem = itemView.categoriesItemClick
+    }
+
+    interface OnItemClick {
+        fun onItemClickCategory(categories: Categories)
     }
 }
+
+

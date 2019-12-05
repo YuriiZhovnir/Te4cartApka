@@ -20,8 +20,6 @@ import rx.schedulers.Schedulers
 import com.google.android.material.tabs.TabLayout
 
 
-
-
 class DeteilsProductFragment : Fragment() {
     companion object {
         const val PRODUCT_ID = "pattern_id"
@@ -92,7 +90,7 @@ class DeteilsProductFragment : Fragment() {
 
                         }
                         parametersProduct.setOnClickListener {
-//                            characteristics = response.productCategoryProperty
+                            //                            characteristics = response.productCategoryProperty
                             parametersProduct.setTextColor(Color.RED)
                             openDescription.setTextColor(Color.BLACK)
                         }
