@@ -2,84 +2,93 @@ package com.example.te4cartapka
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.te4carta.InterfaceView
 import com.example.te4cartapka.adapter.CategoriesAdapter
 import com.example.te4cartapka.adapter.ProductsAdapter
 import com.example.te4cartapka.fragment.DeteilsProductFragment
 import com.example.te4cartapka.fragment.ProductFragment
-import com.example.te4cartapka.helpers.GlobalData
 import com.example.te4cartapka.network.respons.Categories
 import com.example.te4cartapka.network.respons.Product
-import jdroidcoder.ua.apiservice.network.RetrofitSubscriber
+import com.example.te4cartapka.presenter.InterfacePresenter
+import com.example.te4cartapka.presenter.impl.HomePresenter
 import kotlinx.android.synthetic.main.activity_main.*
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import kotlinx.android.synthetic.main.tool_bar.*
+
 
 class HomeActivity : AppCompatActivity(), ProductsAdapter.OnItemClick,
-        CategoriesAdapter.OnItemClick {
+        CategoriesAdapter.OnItemClick, InterfaceView {
 
+    private var categ: InterfacePresenter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        if (null == categ) {
+            categ = HomePresenter(this)
+        }
+
         val linearLayoutManager = LinearLayoutManager(this)
         categoriesList?.layoutManager = linearLayoutManager
-        getCategories()
+
+        val searchText = searchET as EditText
+        searchBTN.setOnClickListener{
+            categ?.getProduct(searchText.text.toString(), null.toString(), null.toString(), true)
+        }
+
+        categ?.getCategories()
+        categ?.getProduct(null.toString(), slug = String(), categoriesName = String(), isSearch = false)
+
     }
 
-    fun getCategories() {
-        GlobalData.apiService?.getCategories()
-                ?.subscribeOn(Schedulers.io())
-                ?.observeOn(AndroidSchedulers.mainThread())
-                ?.unsubscribeOn(Schedulers.io())
-                ?.subscribe(object : RetrofitSubscriber<ArrayList<Categories>>() {
-                    override fun onNext(response: ArrayList<Categories>) {
-                        categoriesList?.adapter = CategoriesAdapter( response, this@HomeActivity)
-                        response.forEach {
-                            getProduct(it.slug.toString(), it.categoryName.toString())
-                        }
-                    }
+    override fun setCategories(categIV: ArrayList<Categories>) {
+        categoriesList.adapter = CategoriesAdapter(categIV, this@HomeActivity)
 
-                    override fun onError(e: Throwable) {
-                        super.onError(e)
-                    }
-                })
     }
 
-    fun getProduct(slug: String, categoriesName: String) {
-        GlobalData.apiService?.getProduct(slug)
-                ?.subscribeOn(Schedulers.io())
-                ?.observeOn(AndroidSchedulers.mainThread())
-                ?.unsubscribeOn(Schedulers.io())
-                ?.subscribe(object : RetrofitSubscriber<ArrayList<Product>>() {
-                    override fun onNext(respons: ArrayList<Product>) {
+    override fun setProduct(product: ArrayList<Product>, slug: String, categoriesName: String) {
+        val view = LayoutInflater.from(this@HomeActivity)
+                .inflate(R.layout.product_recycler, null)
+        view?.findViewById<TextView>(R.id.categoriesNameInProductList)?.apply {
+            this.text = categoriesName
+        }
 
-                        val view = LayoutInflater.from(this@HomeActivity)
-                                .inflate(R.layout.product_recycler, null)
+        view?.findViewById<RecyclerView>(R.id.productList)?.apply {
+            this?.layoutManager = LinearLayoutManager(
+                    this@HomeActivity,
+                    LinearLayoutManager.HORIZONTAL,
+                    false
+            )
+            this?.adapter = ProductsAdapter(this@HomeActivity, product)
 
-                        view?.findViewById<TextView>(R.id.categoriesNameInProductList)?.apply {
-                            this?.text = categoriesName
-                        }
+        }
+        products.addView(view)
 
-                        view?.findViewById<RecyclerView>(R.id.productList)?.apply {
-                            this?.layoutManager = LinearLayoutManager(
-                                    this@HomeActivity,
-                                    LinearLayoutManager.HORIZONTAL,
-                                    false
-                            )
-                            this?.adapter = ProductsAdapter(this@HomeActivity, respons)
+        val viewt = LayoutInflater.from(this@HomeActivity)
+                .inflate(R.layout.search_fragment, null)
+        viewt?.findViewById<RecyclerView>(R.id.searchList)?.apply {
+            this?.layoutManager = LinearLayoutManager(
+                    this@HomeActivity,
+                    LinearLayoutManager.HORIZONTAL,
+                    false
+            )
+            this?.adapter = ProductsAdapter(this@HomeActivity, product)
 
-                        }
-                        products.addView(view)
-                    }
-                })
+        }
+//        searchList.adapter = ProductsAdapter(this@HomeActivity, product)
+
     }
 
-    override fun onItemClick(product: Product) {
-        val fragment = DeteilsProductFragment.newInstance(product.id?.toInt()!!)
+
+    override fun onItemClick(productId: Int) {
+        val fragment = DeteilsProductFragment.newInstance(productId)
         supportFragmentManager
                 ?.beginTransaction()
                 ?.replace(R.id.container, fragment)
@@ -96,4 +105,6 @@ class HomeActivity : AppCompatActivity(), ProductsAdapter.OnItemClick,
                 ?.commit()
     }
 
+
 }
+

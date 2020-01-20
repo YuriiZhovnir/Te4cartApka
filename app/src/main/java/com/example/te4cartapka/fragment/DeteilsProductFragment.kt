@@ -10,17 +10,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.te4cartapka.R
 import com.example.te4cartapka.adapter.SliderAdapter
-import com.example.te4cartapka.helpers.GlobalData
 import com.example.te4cartapka.network.respons.DeteilsProduct
-import jdroidcoder.ua.apiservice.network.RetrofitSubscriber
+import com.example.te4cartapka.presenter.ProductDetailsPresenter
+import com.example.te4cartapka.presenter.impl.ProductDetailsPresenterImpl
+import com.example.te4cartapka.view.ProductDetailsView
 import kotlinx.android.synthetic.main.fragment__product_deteils.*
 import kotlinx.android.synthetic.main.fragment__product_deteils.nameProduct
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import com.google.android.material.tabs.TabLayout
 
 
-class DeteilsProductFragment : Fragment() {
+class DeteilsProductFragment : Fragment(), ProductDetailsView {
     companion object {
         const val PRODUCT_ID = "pattern_id"
         fun newInstance(productId: Int) = DeteilsProductFragment().apply {
@@ -30,6 +29,8 @@ class DeteilsProductFragment : Fragment() {
         }
     }
 
+    private var presenter: ProductDetailsPresenter? = null
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -37,66 +38,77 @@ class DeteilsProductFragment : Fragment() {
     ): View? {
 
         return inflater.inflate(R.layout.fragment__product_deteils, container, false)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val productId = arguments?.getInt(PRODUCT_ID)
-        productId?.let { getDeteilsProduct(it) }
+
+        if (null == presenter) {
+            presenter = ProductDetailsPresenterImpl(this)
+        }
+        productId?.let { presenter?.getProductDetailsById(it) }
     }
 
-    fun getDeteilsProduct(productId: Int) {
-        GlobalData.apiService?.getDetailsProduct(productId)
-                ?.subscribeOn(Schedulers.io())
-                ?.observeOn(AndroidSchedulers.mainThread())
-                ?.unsubscribeOn(Schedulers.io())
-                ?.subscribe(object : RetrofitSubscriber<DeteilsProduct>() {
-                    override fun onNext(response: DeteilsProduct) {
-                        nameProduct.text = response.productName
-
-                        val adapter = context?.let { SliderAdapter(it, response.images) }
-                        viewPager.setAdapter(adapter)
+    override fun showProductDetails(deteilsProduct: DeteilsProduct) {
+        nameProduct.text = deteilsProduct.productName
+        val adapter = context?.let { SliderAdapter(it, deteilsProduct.images) }
+        viewPager.setAdapter(adapter)
 
 
-                        val tabLayout = view?.findViewById(R.id.tab_layout) as TabLayout
-                        tabLayout.setupWithViewPager(viewPager, true)
+        val tabLayout = view?.findViewById(com.example.te4cartapka.R.id.tab_layout) as TabLayout
+        tabLayout.setupWithViewPager(viewPager, true)
 
 
 
-                        priceProduct.text = response.productPrice.toString()
+        priceProduct.text = deteilsProduct.productPrice.toString()
 
 
-                        if (response.available == true) {
-                            productExistence.text = getText(R.string.product_exist)
-                        }
-                        nameCategories.text = response.category.categoryName
+        if (deteilsProduct.available == true) {
+            productExistence.text = getText(R.string.product_exist)
+        }
+        nameCategories.text = deteilsProduct.category.categoryName
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            shortDescription.setText(Html.fromHtml(response.description, Html.FROM_HTML_MODE_COMPACT))
-                            description.setText(Html.fromHtml(response.description, Html.FROM_HTML_MODE_COMPACT))
-                        } else {
-                            shortDescription.setText(Html.fromHtml(response.description))
-                            description.setText(Html.fromHtml(response.description))
-                        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            shortDescription.setText(Html.fromHtml(deteilsProduct.description, Html.FROM_HTML_MODE_COMPACT))
+            description.setText(Html.fromHtml(deteilsProduct.description, Html.FROM_HTML_MODE_COMPACT))
+        } else {
+            shortDescription.setText(Html.fromHtml(deteilsProduct.description))
+            description.setText(Html.fromHtml(deteilsProduct.description))
+        }
 
-                        openDescription.setOnClickListener {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                description.setText(Html.fromHtml(response.description, Html.FROM_HTML_MODE_COMPACT))
-                            } else {
-                                description.setText(Html.fromHtml(response.description))
-                            }
-                            openDescription.setTextColor(Color.RED)
-                            parametersProduct.setTextColor(Color.BLACK)
+        openDescription.setOnClickListener {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                description.setText(Html.fromHtml(deteilsProduct.description, Html.FROM_HTML_MODE_COMPACT))
+            } else {
+                description.setText(Html.fromHtml(deteilsProduct.description))
+            }
+            openDescription.setTextColor(Color.RED)
+            parametersProduct.setTextColor(Color.BLACK)
+            description.visibility = View.VISIBLE
+            allParameters.visibility = View.GONE
 
-                        }
-                        parametersProduct.setOnClickListener {
-                            //                            characteristics = response.productCategoryProperty
-                            parametersProduct.setTextColor(Color.RED)
-                            openDescription.setTextColor(Color.BLACK)
-                        }
+        }
+        parametersProduct.setOnClickListener {
+            //                            characteristics = response.productCategoryProperty
+            parametersProduct.setTextColor(Color.RED)
+            openDescription.setTextColor(Color.BLACK)
+            description.visibility = View.GONE
+            allParameters.visibility = View.VISIBLE
+            var properties = 0
 
-                    }
-                })
+            deteilsProduct.productCategoryProperty.simpleProperties?.forEach {
+                val property = deteilsProduct.productCategoryProperty.simpleProperties
+                if (it.value.isNullOrEmpty()) {
+
+
+                }
+
+            }
+
+        }
+
     }
 
 }

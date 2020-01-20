@@ -10,10 +10,10 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.product_item_style.view.*
 
 class ProductsAdapter(val listener: OnItemClick?, var product: ArrayList<Product> = ArrayList()) :
-    RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
+        RecyclerView.Adapter<ProductsAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.product_item_style, parent, false)
+                .inflate(R.layout.product_item_style, parent, false)
         return ViewHolder(view)
     }
 
@@ -21,11 +21,15 @@ class ProductsAdapter(val listener: OnItemClick?, var product: ArrayList<Product
         val item = product.get(position)
         holder.name.text = item.productName
         Picasso.get()
-            .load("https://te4cart.com.ua/files/" + item.mainImage)
-            .into(holder.image)
+                .load("https://te4cart.com.ua/files/" + if (false == item.mainImage?.isNullOrEmpty()) {
+                    item.mainImage
+                } else {
+                    item?.images?.get(0)
+                })
+                .into(holder.image)
         holder.price.text = item.productPrice.toString()
         holder.productItem.setOnClickListener {
-            listener?.onItemClick(item)
+            item.id?.let { it1 -> listener?.onItemClick(it1) }
         }
     }
 
@@ -39,6 +43,6 @@ class ProductsAdapter(val listener: OnItemClick?, var product: ArrayList<Product
     }
 
     interface OnItemClick {
-        fun onItemClick(product:Product)
+        fun onItemClick(productId: Int)
     }
 }

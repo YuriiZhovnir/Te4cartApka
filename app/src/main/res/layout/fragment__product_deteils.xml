@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="51dp">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -140,6 +141,7 @@
                 android:lines="3" />
 
             <Button
+                android:id="@+id/buy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -201,10 +203,28 @@
                 android:justificationMode="inter_word"
                 android:padding="8dp" />
 
-            <TableLayout
-                android:id="@+id/characteristics"
+            <LinearLayout
+                android:id="@+id/allParameters"
+                android:visibility="gone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/nameParameters"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="nameParameters" />
+
+                <TextView
+                    android:id="@+id/parameters"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="parameters" />
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>

@@ -19,5 +19,12 @@ interface Api{
 
     @POST("getProductFromCategoryNoRand")
     @FormUrlEncoded
-    fun getProductFromCategoryNoRand(@Field("categorySlug") categorySlug: String): Observable<ArrayList<GetProductFromCategoryNoRand>>
+    fun getProductFromCategoryNoRand(@Field("categorySlug") categorySlug: String): Observable<ArrayList<Product>>
+
+    @POST("storeSearch")
+    @FormUrlEncoded
+    fun getSearch(@Field("searchText") searchText: String,
+                  @Field("limit") limit: Int = 20,
+                  @Field("page") page:Int = 1): Observable<ArrayList<Product>>
+
 }

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".HomeActivity">
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,14 +17,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
+            <include layout="@layout/search_fragment" />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/categoriesList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"
                 android:scrollbars="vertical" />
-            <include layout="@layout/product_recycler"/>
+            <include layout="@layout/product_recycler" />
+
             <LinearLayout
                 android:id="@+id/products"
                 android:layout_width="match_parent"
@@ -32,6 +34,7 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
     <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
@@ -83,13 +86,18 @@
                 android:orientation="horizontal">
 
                 <EditText
+                    android:id="@+id/searchET"
                     android:layout_width="250dp"
                     android:layout_height="fill_parent"
                     android:background="@android:color/white"
                     android:hint="@string/search"
-                    android:paddingLeft="10dp" />
+                    android:imeOptions="actionSearch"
+                    android:inputType="textFilter"
+                    android:paddingLeft="10dp"
+                    android:textColor="@android:color/background_dark" />
 
                 <Button
+                    android:id="@+id/searchBTN"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
                     android:background="@drawable/btn_round_right"
@@ -97,7 +105,10 @@
                     android:text="@string/faind"
                     android:textColor="@android:color/white" />
             </LinearLayout>
+
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
-
+    <include
+        android:id="@+id/toolBat"
+        layout="@layout/tool_bar" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

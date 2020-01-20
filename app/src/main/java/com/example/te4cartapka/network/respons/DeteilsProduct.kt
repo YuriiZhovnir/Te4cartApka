@@ -18,5 +18,22 @@ class DeteilsProduct(
 class Category(@SerializedName("categoryName") var categoryName: String?)
 
 class ProductCategoryProperty(
-//        @SerializedName("advancedProperties") var advancedProperties: ArrayList<String>? = ArrayList()
+        @SerializedName("id") var id: Int?,
+        @SerializedName("simpleProperties") var simpleProperties: ArrayList<SimpleProperties>? = ArrayList(),
+        @SerializedName("advancedProperties") var advancedProperties: ArrayList<AdvancedProperties>? = ArrayList()
 )
+
+class SimpleProperties(
+        @SerializedName("id") var id: Int?,
+        @SerializedName("propertyName") var propertyName: String?,
+        @SerializedName("parentId") var parentId: Int?,
+        @SerializedName("value") var value: String?,
+        @SerializedName("group") var group: Int?
+        )
+class AdvancedProperties(
+        @SerializedName("id") var id: Int?,
+        @SerializedName("propertyName") var propertyName: String?,
+        @SerializedName("parentId") var parentId: Int?,
+        @SerializedName("value") var value: String?,
+        @SerializedName("group") var group: Int?
+        )

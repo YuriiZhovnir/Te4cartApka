@@ -7,21 +7,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.te4cartapka.R
-import com.example.te4cartapka.adapter.ProductAdapter
-import com.example.te4cartapka.helpers.GlobalData
-import com.example.te4cartapka.helpers.GlobalData.product
-import com.example.te4cartapka.network.respons.GetProductFromCategoryNoRand
-import jdroidcoder.ua.apiservice.network.RetrofitSubscriber
+import com.example.te4cartapka.adapter.ProductsAdapter
 import kotlinx.android.synthetic.main.fragment_product.*
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 
-class ProductFragment : Fragment(), ProductAdapter.OnItemClick {
+
+class ProductFragment : Fragment(), ProductsAdapter.OnItemClick {
 
     companion object {
-        //        fun newInstance(): ProductFragment {
-//            return ProductFragment()
-//        }
         const val PRODUCT_ID = "pattern_id"
 
         fun newInstance(slug: String) = ProductFragment().apply {
@@ -44,29 +36,30 @@ class ProductFragment : Fragment(), ProductAdapter.OnItemClick {
         val linearLayoutManager = LinearLayoutManager(context)
         productListC?.layoutManager = linearLayoutManager
         val slug = arguments?.getString(ProductFragment.PRODUCT_ID)
-        slug?.let { getProductCategory(it) }
+//        slug?.let { getProductCategory(it) }
+
     }
 
-
-    fun getProductCategory(slug: String) {
-        GlobalData.apiService?.getProductFromCategoryNoRand(slug)
-                ?.subscribeOn(Schedulers.io())
-                ?.observeOn(AndroidSchedulers.mainThread())
-                ?.unsubscribeOn(Schedulers.io())
-                ?.subscribe(object : RetrofitSubscriber<ArrayList<GetProductFromCategoryNoRand>>() {
-                    override fun onNext(result: ArrayList<GetProductFromCategoryNoRand>) {
-                        productListC.adapter = ProductAdapter(this@ProductFragment, result)
-
-                    }
-                })
-    }
-
-    override fun onClickProduct(getProductFromCategoryNoRand: GetProductFromCategoryNoRand) {
-        val fragment = DeteilsProductFragment.newInstance(getProductFromCategoryNoRand.id?.toInt()!!)
-        fragmentManager
+    override fun onItemClick(productId: Int) {
+        val fragment = DeteilsProductFragment.newInstance(productId)
+        activity?.supportFragmentManager
                 ?.beginTransaction()
                 ?.replace(R.id.container, fragment)
                 ?.addToBackStack(null)
                 ?.commit()
     }
-}
+
+
+//    fun getProductCategory(slug: String) {
+//        GlobalData.apiService?.getProductFromCategoryNoRand(slug)
+//                ?.subscribeOn(Schedulers.io())
+//                ?.observeOn(AndroidSchedulers.mainThread())
+//                ?.unsubscribeOn(Schedulers.io())
+//                ?.subscribe(object : RetrofitSubscriber<ArrayList<GetProductFromCategoryNoRand>>() {
+//                    override fun onNext(respons: ArrayList<GetProductFromCategoryNoRand>) {
+////                        productListC.adapter = ProductsAdapter(this@ProductFragment, respons)
+//
+//                    }
+//                })
+    }
+
